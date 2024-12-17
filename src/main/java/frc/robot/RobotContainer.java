@@ -20,8 +20,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class RobotContainer {
-  private double MaxSpeed = 2; // kSpeedAt12VoltsMps desired top speed
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private double MaxSpeed = 1; // kSpeedAt12VoltsMps desired top speed
+  private double MaxAngularRate = 0.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -43,10 +43,10 @@ public class RobotContainer {
       new SlewRateLimiter(1, -7, 0);
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive.withVelocityX(
-          Math.copySign(xLimiter.calculate(Math.abs(joystick.getLeftY())), -joystick.getLeftY()) * MaxSpeed) // Drive forward with
+          -joystick.getLeftY()* MaxSpeed) // Drive forward with
                                                                               // negative Y (forward)
             .withVelocityY(
-              Math.copySign(yLimiter.calculate(Math.abs(joystick.getLeftX())), -joystick.getLeftX()) * MaxSpeed
+              -joystick.getLeftX() * MaxSpeed
             ) // Drive left with negative X (left)
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ));
@@ -65,7 +65,7 @@ public class RobotContainer {
 
     joystick.x().onTrue(Commands.runOnce(SignalLogger::start));
     joystick.y().onTrue(Commands.runOnce(SignalLogger::stop));
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> new SwerveRequest.SysIdSwerveRotation()));
+    // joystick.a().whileTrue(drivetrain.applyRequest(() -> new SwerveRequest.SysIdSwerveRotation()));
   }
 
   public RobotContainer() {
